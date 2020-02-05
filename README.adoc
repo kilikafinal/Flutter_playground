@@ -1,0 +1,29 @@
+README
+===============
+Author Name <author@email.com>
+v1.0, February 2020: Initial release
+:showtitlepage:
+:notitle:
+:noheader:
+:nofooter:
+
+== Introduction
+The purpose of this repo is a playground to test out building applications using Flutter.
+
+== Background
+
+== Theory
+
+== Materials and apparatus
+
+== Procedure
+
+== Workplan
+
+== Results
+
+== Discussion
+
+== Conclusion
+
+== Recomendations
