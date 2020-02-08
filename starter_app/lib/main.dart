@@ -7,9 +7,6 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
-  RandomWordsState createState() => RandomWordsState();
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Startup name generator',
@@ -89,7 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.display1,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .display1,
             ),
           ],
         ),
@@ -105,6 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
+  final _saved = Set<WordPair>();
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
   Widget _buildSuggestions() {
@@ -121,12 +122,37 @@ class RandomWordsState extends State<RandomWords> {
         });
   }
 
-  Widget _buildRow(WordPair pair){
+  Widget _buildRow(WordPair pair) {
+    final bool alreadySaved = _saved.contains(pair);
     return ListTile(
-      title: Text(
-        pair.asPascalCase,
-        style: _biggerFont,
-      ),
+        title: Text(
+          pair.asPascalCase,
+          style: _biggerFont,
+        ),
+        trailing: new Column(
+            children: <Widget>[
+              new Container(
+                child: new IconButton(
+                  icon: new Icon(
+                    alreadySaved ? Icons.favorite : Icons.favorite_border,
+                    color: alreadySaved ? Colors.red : null,),
+                  onPressed: () {
+                    setState(() {
+                      if(alreadySaved){
+                        _saved.remove(pair);
+                      }else{
+                        _saved.add(pair);
+                      }
+                    });
+                  },
+
+                ),
+//                margin: EdgeInsets.only(right: 1),
+              )
+            ]
+        )
+//        alreadySaved ? Icons.favorite : Icons.favorite_border,
+//        color: alreadySaved ? Colors.red : null,
     );
   }
 
