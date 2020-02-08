@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 
@@ -86,10 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               '$_counter',
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .display1,
+              style: Theme.of(context).textTheme.display1,
             ),
           ],
         ),
@@ -124,35 +119,36 @@ class RandomWordsState extends State<RandomWords> {
 
   Widget _buildRow(WordPair pair) {
     final bool alreadySaved = _saved.contains(pair);
-    return ListTile(
-        title: Text(
-          pair.asPascalCase,
-          style: _biggerFont,
-        ),
-        trailing: new Column(
-            children: <Widget>[
-              new Container(
-                child: new IconButton(
-                  icon: new Icon(
-                    alreadySaved ? Icons.favorite : Icons.favorite_border,
-                    color: alreadySaved ? Colors.red : null,),
-                  onPressed: () {
-                    setState(() {
-                      if(alreadySaved){
-                        _saved.remove(pair);
-                      }else{
-                        _saved.add(pair);
-                      }
-                    });
-                  },
-
-                ),
+    return ExpansionTile(
+      title: Text(
+        pair.asPascalCase,
+        style: _biggerFont,
+      ),
+      trailing: new Column(children: <Widget>[
+        new Container(
+          child: new IconButton(
+            icon: new Icon(
+              alreadySaved ? Icons.favorite : Icons.favorite_border,
+              color: alreadySaved ? Colors.red : null,
+            ),
+            onPressed: () {
+              setState(() {
+                if (alreadySaved) {
+                  _saved.remove(pair);
+                } else {
+                  _saved.add(pair);
+                }
+              });
+            },
+          ),
 //                margin: EdgeInsets.only(right: 1),
-              )
-            ]
         )
-//        alreadySaved ? Icons.favorite : Icons.favorite_border,
-//        color: alreadySaved ? Colors.red : null,
+      ]),
+      children: <Widget>[
+        new ListTile(
+          title: Text("test"),
+        )
+      ],
     );
   }
 
@@ -160,10 +156,40 @@ class RandomWordsState extends State<RandomWords> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Startup name generator'),
+        title: Text('GIMME SCHEDULE'),
+        backgroundColor: Colors.red,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.list),
+            onPressed: _pushedSaved,
+          )
+        ],
       ),
       body: _buildSuggestions(),
     );
+  }
+
+  void _pushedSaved() {
+    Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (BuildContext context) {
+      final Iterable<ListTile> tiles = _saved.map((WordPair pair) {
+        return ListTile(
+          title: Text(
+            pair.asPascalCase,
+            style: _biggerFont,
+          ),
+        );
+      });
+      final List<Widget> divided =
+          ListTile.divideTiles(context: context, tiles: tiles).toList();
+
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("hahahaha"),
+        ),
+        body: ListView(children: divided),
+      );
+    }));
   }
 }
 
