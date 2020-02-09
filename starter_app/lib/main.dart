@@ -9,6 +9,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Startup name generator',
       home: RandomWords(),
+      theme: ThemeData(primaryColor: Colors.indigoAccent),
     );
   }
 }
@@ -118,19 +119,34 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair pair) {
-    final bool alreadySaved = _saved.contains(pair);
+    bool alreadySaved = _saved.contains(pair);
     return ExpansionTile(
       title: Text(
         pair.asPascalCase,
         style: _biggerFont,
       ),
       trailing: new Column(children: <Widget>[
+//        new Container(
+//          child: new IconButton(
+//            icon: new Icon(
+//              alreadySaved ? Icons.favorite : Icons.favorite_border,
+//              color: alreadySaved ? Colors.red : null,
+//            ),
+//            onPressed: () {
+//              setState(() {
+//                if (alreadySaved) {
+//                  _saved.remove(pair);
+//                } else {
+//                  _saved.add(pair);
+//                }
+//              });
+//            },
+//          ),
+////                margin: EdgeInsets.only(right: 1),
+//        ),
         new Container(
-          child: new IconButton(
-            icon: new Icon(
-              alreadySaved ? Icons.favorite : Icons.favorite_border,
-              color: alreadySaved ? Colors.red : null,
-            ),
+          child: new OutlineButton(
+            child: Text(alreadySaved ? "End" : "Start"),
             onPressed: () {
               setState(() {
                 if (alreadySaved) {
@@ -141,13 +157,27 @@ class RandomWordsState extends State<RandomWords> {
               });
             },
           ),
-//                margin: EdgeInsets.only(right: 1),
         )
       ]),
       children: <Widget>[
         new ListTile(
-          title: Text("test"),
-        )
+          title: Text("Details"),
+    ),
+          new ListTile(
+            title: Text("task 1"),
+          trailing: new Column(
+            children: <Widget>[
+              Checkbox(
+                value: alreadySaved,
+                onChanged: (bool value) {
+                  setState(() {
+                    alreadySaved ? _saved.remove(pair) : _saved.add(pair);
+                  });
+                },
+              )
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -157,7 +187,7 @@ class RandomWordsState extends State<RandomWords> {
     return Scaffold(
       appBar: AppBar(
         title: Text('GIMME SCHEDULE'),
-        backgroundColor: Colors.red,
+//        backgroundColor: Colors.red,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.list),
