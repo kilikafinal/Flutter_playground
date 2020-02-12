@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -120,6 +123,7 @@ class RandomWordsState extends State<RandomWords> {
 
   Widget _buildRow(WordPair pair) {
     bool alreadySaved = _saved.contains(pair);
+    Future<Post> post = fetchPost();
     return ExpansionTile(
       title: Text(
         pair.asPascalCase,
@@ -160,11 +164,21 @@ class RandomWordsState extends State<RandomWords> {
         )
       ]),
       children: <Widget>[
+        new FutureBuilder<Post>(
+            future: post,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data.name);
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+              return CircularProgressIndicator();
+            }),
         new ListTile(
           title: Text("Details"),
-    ),
-          new ListTile(
-            title: Text("task 1"),
+        ),
+        new ListTile(
+          title: Text("task 1"),
           trailing: new Column(
             children: <Widget>[
               Checkbox(
@@ -202,10 +216,12 @@ class RandomWordsState extends State<RandomWords> {
   void _pushedSaved() {
     Navigator.of(context)
         .push(MaterialPageRoute<void>(builder: (BuildContext context) {
+      var post = fetchPost();
+
       final Iterable<ListTile> tiles = _saved.map((WordPair pair) {
         return ListTile(
           title: Text(
-            pair.asPascalCase,
+            post.toString(),
             style: _biggerFont,
           ),
         );
@@ -221,9 +237,38 @@ class RandomWordsState extends State<RandomWords> {
       );
     }));
   }
+
+  Future<http.Response> getResponse() {
+    return http.get("http://localhost:8080/");
+  }
+
+  Future<Post> fetchPost() async {
+    final response = await http.get("http://10.0.2.2:8080/");
+    if (response.statusCode == 200) {
+      return Post.fromJson(json.decode(response.body));
+    } else {
+      throw Exception("Failed to load post");
+    }
+  }
 }
 
 class RandomWords extends StatefulWidget {
   @override
   RandomWordsState createState() => RandomWordsState();
+}
+
+class Post {
+  final int id;
+  final String name;
+  final int salary;
+
+  Post({this.id, this.name, this.salary});
+
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      id: json['id'],
+      name: json['name'],
+      salary: json['salary'],
+    );
+  }
 }
