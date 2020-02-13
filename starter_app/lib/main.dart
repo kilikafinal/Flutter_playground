@@ -123,7 +123,7 @@ class RandomWordsState extends State<RandomWords> {
 
   Widget _buildRow(WordPair pair) {
     bool alreadySaved = _saved.contains(pair);
-    Future<Post> post = fetchPost();
+    Future<Employee> post = fetchPost();
     return ExpansionTile(
       title: Text(
         pair.asPascalCase,
@@ -164,7 +164,7 @@ class RandomWordsState extends State<RandomWords> {
         )
       ]),
       children: <Widget>[
-        new FutureBuilder<Post>(
+        new FutureBuilder<Employee>(
             future: post,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -242,10 +242,10 @@ class RandomWordsState extends State<RandomWords> {
     return http.get("http://localhost:8080/");
   }
 
-  Future<Post> fetchPost() async {
-    final response = await http.get("http://10.0.2.2:8080/");
+  Future<Employee> fetchPost() async {
+    final response = await http.get("http://10.0.2.2:8080/1");
     if (response.statusCode == 200) {
-      return Post.fromJson(json.decode(response.body));
+      return Employee.fromJson(json.decode(response.body));
     } else {
       throw Exception("Failed to load post");
     }
@@ -258,17 +258,31 @@ class RandomWords extends StatefulWidget {
 }
 
 class Post {
+  final Employee e;
+
+  //data:{"id":1,"name":"user_1","salary":101}
+
+  Post({this.e});
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      e: json['data']
+    );
+  }
+}
+
+class Employee {
   final int id;
   final String name;
   final int salary;
 
-  Post({this.id, this.name, this.salary});
+  Employee({this.id, this.name, this.salary});
 
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
+  factory Employee.fromJson(Map<String, dynamic> json){
+    return Employee(
       id: json['id'],
       name: json['name'],
-      salary: json['salary'],
+      salary: json['salary']
     );
   }
+
 }
